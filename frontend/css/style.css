@@ -1,0 +1,93 @@
+/* RESET */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* BACKGROUND */
+body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1d2671, #c33764);
+    color: #fff;
+}
+
+/* NAVBAR */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 50px;
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(10px);
+}
+
+.navbar a {
+    color: white;
+    margin-left: 20px;
+    text-decoration: none;
+}
+
+/* GLASS CARD */
+.card {
+    width: 360px;
+    margin: 80px auto;
+    padding: 30px;
+    border-radius: 15px;
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    animation: fade 1s ease;
+}
+
+/* INPUT */
+input, textarea {
+    width: 100%;
+    padding: 12px;
+    margin: 12px 0;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+}
+
+/* BUTTON */
+button {
+    width: 100%;
+    padding: 12px;
+    background: #ff4b2b;
+    border: none;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    transform: scale(1.05);
+}
+
+/* GRID */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    padding: 40px;
+    gap: 20px;
+}
+
+.box {
+    background: rgba(255,255,255,0.1);
+    padding: 25px;
+    border-radius: 12px;
+    text-align: center;
+    transition: 0.3s;
+}
+
+.box:hover {
+    transform: translateY(-5px);
+}
+
+/* ANIMATION */
+@keyframes fade {
+    from {opacity:0; transform:translateY(30px);}
+    to {opacity:1; transform:translateY(0);}
+}

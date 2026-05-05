@@ -1,0 +1,16 @@
+<input id="name" placeholder="Project Name">
+<input id="tech" placeholder="Tech Stack">
+<button onclick="addProject()">Add Project</button>
+
+<script>
+function addProject(){
+    fetch("http://localhost:8080/api/projects", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+            name: name.value,
+            tech: tech.value
+        })
+    }).then(() => alert("Project Added"));
+}
+</script>
