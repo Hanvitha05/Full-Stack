@@ -1,0 +1,6 @@
+com\academy\controller\AuthController.class
+com\academy\entity\User.class
+com\academy\config\SecurityConfig.class
+com\academy\repository\UserRepository.class
+com\academy\service\AuthService.class
+com\academy\SkillAcademyApplication.class

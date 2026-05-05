@@ -1,0 +1,33 @@
+<script>
+const email = localStorage.getItem("email");
+
+fetch("http://localhost:8080/api/courses")
+.then(res => res.json())
+.then(data => {
+    let html = "";
+
+    data.forEach(c => {
+        html += `
+        <div class="box">
+            <h3>${c.title}</h3>
+            <p>${c.description}</p>
+            <b>₹${c.price}</b>
+            <button onclick="enroll(${c.id})">Enroll</button>
+        </div>`;
+    });
+
+    document.getElementById("courses").innerHTML = html;
+});
+
+function enroll(courseId){
+    fetch("http://localhost:8080/api/enroll", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+            email: email,
+            courseId: courseId
+        })
+    })
+    .then(() => alert("Enrolled Successfully"));
+}
+</script>

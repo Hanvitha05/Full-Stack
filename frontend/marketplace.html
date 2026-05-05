@@ -1,0 +1,11 @@
+function buy(courseId){
+    fetch("http://localhost:8080/api/enroll", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+            email: localStorage.getItem("email"),
+            courseId: courseId
+        })
+    })
+    .then(() => alert("Purchase Successful"));
+}

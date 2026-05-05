@@ -1,0 +1,17 @@
+<div id="list"></div>
+
+<script>
+const email = localStorage.getItem("email");
+
+fetch("http://localhost:8080/api/enroll/" + email)
+.then(res => res.json())
+.then(data => {
+    let html = "";
+
+    data.forEach(e => {
+        html += `<div class="box">Course ID: ${e.courseId}</div>`;
+    });
+
+    document.getElementById("list").innerHTML = html;
+});
+</script>
