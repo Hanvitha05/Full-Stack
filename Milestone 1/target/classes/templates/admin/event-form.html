@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Form - Admin</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <nav class="navbar" style="background-color: var(--secondary-color);">
+        <div class="logo" style="color: white;">Admin Dashboard</div>
+        <div>
+            <a th:href="@{/admin}">Events</a>
+            <a th:href="@{/}">Exit Portal</a>
+            <a th:href="@{/logout}">Logout</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="card" style="max-width: 800px; margin: 0 auto;">
+            <h2 th:text="${event.id == null ? 'Add New Event' : 'Edit Event'}">Event Form</h2>
+            <hr>
+            
+            <form th:action="@{/admin/saveEvent}" th:object="${event}" method="POST">
+                <input type="hidden" th:field="*{id}" />
+                
+                <div class="form-group">
+                    <label for="title">Event Title</label>
+                    <input type="text" th:field="*{title}" id="title" class="form-control" placeholder="Event Title">
+                    <span th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="error"></span>
+                </div>
+                
+                <div class="form-group">
+                    <label for="date">Event Date and Time</label>
+                    <input type="datetime-local" th:field="*{date}" id="date" class="form-control">
+                    <span th:if="${#fields.hasErrors('date')}" th:errors="*{date}" class="error"></span>
+                </div>
+                
+                <div class="form-group">
+                    <label for="department">Department</label>
+                    <input type="text" th:field="*{department}" id="department" class="form-control" placeholder="e.g. Computer Science">
+                    <span th:if="${#fields.hasErrors('department')}" th:errors="*{department}" class="error"></span>
+                </div>
+                
+                <div class="form-group">
+                    <label for="location">Location</label>
+                    <input type="text" th:field="*{location}" id="location" class="form-control" placeholder="e.g. Main Auditorium, City Center">
+                    <span th:if="${#fields.hasErrors('location')}" th:errors="*{location}" class="error"></span>
+                </div>
+                
+                <div class="form-group">
+                    <label for="eventType">Event Type</label>
+                    <select th:field="*{eventType}" id="eventType" class="form-control">
+                        <option value="Seminar">Seminar</option>
+                        <option value="Workshop">Workshop</option>
+                        <option value="Conference">Conference</option>
+                        <option value="Webinar">Webinar</option>
+                        <option value="Bootcamp">Bootcamp</option>
+                        <option value="Other">Other</option>
+                    </select>
+                    <span th:if="${#fields.hasErrors('eventType')}" th:errors="*{eventType}" class="error"></span>
+                </div>
+                
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea th:field="*{description}" id="description" class="form-control" rows="5" placeholder="Detailed description of the event..."></textarea>
+                    <span th:if="${#fields.hasErrors('description')}" th:errors="*{description}" class="error"></span>
+                </div>
+                
+                <div style="margin-top: 2rem;">
+                    <button type="submit" class="btn btn-primary">Save Event</button>
+                    <a th:href="@{/admin}" class="btn btn-secondary" style="margin-left: 1rem;">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

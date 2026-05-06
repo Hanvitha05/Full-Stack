@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Registrations</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">Smart Campus Events</div>
+        <div>
+            <a th:href="@{/student/events}">Home</a>
+            <a th:href="@{/student/my-registrations}">My Registrations</a>
+            <a th:href="@{/}">Exit Portal</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="card">
+            <h2>Your Event Registrations</h2>
+            <p>Showing registrations for: <strong th:text="${email}">email@domain.com</strong></p>
+            
+            <div th:if="${registrations.empty}" class="alert-success" style="margin-top: 2rem;">
+                You haven't registered for any events yet. <a th:href="@{/student/events}">Browse upcoming events</a>.
+            </div>
+            
+            <div th:if="${!registrations.empty}" style="margin-top: 2rem;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Event Title</th>
+                            <th>Event Date</th>
+                            <th>Department</th>
+                            <th>Registration Date</th>
+                            <th>Ticket</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="reg : ${registrations}">
+                            <td th:text="${reg.event.title}">Title</td>
+                            <td th:text="${#temporals.format(reg.event.date, 'dd MMM yyyy, HH:mm')}">Date</td>
+                            <td th:text="${reg.event.department}">Dept</td>
+                            <td th:text="${#temporals.format(reg.registrationDate, 'dd MMM yyyy, HH:mm')}">Reg Date</td>
+                            <td>
+                                <img th:src="@{'https://api.qrserver.com/v1/create-qr-code/?size=64x64&data=RegistrationID:' + ${reg.id}}" alt="QR" style="border-radius: 4px;" />
+                            </td>
+                            <td>
+                                <a th:href="@{/student/event/{id}(id=${reg.event.id})}" class="btn btn-secondary" style="font-size: 0.8rem; padding: 0.3rem 0.6rem;">Details</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div style="margin-top: 2rem;">
+                <a th:href="@{/student/my-registrations}" class="btn btn-secondary">Check Another Email</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

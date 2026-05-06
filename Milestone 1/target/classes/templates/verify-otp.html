@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify OTP</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">Smart Campus Events</div>
+        <div>
+            <a th:href="@{/student/events}">Home</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="card" style="max-width: 500px; margin: 0 auto; text-align: center;">
+            <h2>Verify Your Registration</h2>
+            <p style="color: #666; margin-bottom: 2rem;">Please enter the 6-digit OTP sent to your email to confirm your registration.</p>
+            
+            <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+            
+            <form th:action="@{/student/verify-otp}" method="POST">
+                <input type="hidden" name="registrationId" th:value="${registrationId}">
+                
+                <div class="form-group" style="text-align: left;">
+                    <label for="otp">Enter OTP</label>
+                    <input type="text" id="otp" name="otp" class="form-control" placeholder="123456" required pattern="\d{6}" maxlength="6" style="font-size: 1.5rem; text-align: center; letter-spacing: 0.5rem;">
+                </div>
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%; font-size: 1.1rem;">Verify and Complete Registration</button>
+            </form>
+            <p style="margin-top: 1.5rem; font-size: 0.9rem; color: #888;">
+                <em>Note: In this development environment, please check the application console to find the generated OTP.</em>
+            </p>
+        </div>
+    </div>
+</body>
+</html>
