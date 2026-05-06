@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Campus Events</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">Smart Campus Events</div>
+        <div>
+            <a th:href="@{/student/events}">Home</a>
+            <a th:href="@{/student/my-registrations}">My Registrations</a>
+            <a th:href="@{/}">Exit Portal</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>Upcoming Events</h1>
+        
+        <div class="card" style="margin-bottom: 2rem;">
+            <form th:action="@{/student/events}" method="get" style="display: flex; gap: 1rem; align-items: flex-end;">
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="department">Department</label>
+                    <input type="text" id="department" name="department" th:value="${department}" class="form-control" placeholder="e.g. Computer Science">
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="eventType">Event Type</label>
+                    <input type="text" id="eventType" name="eventType" th:value="${eventType}" class="form-control" placeholder="e.g. Seminar">
+                </div>
+                <button type="submit" class="btn btn-primary">Filter</button>
+                <a th:href="@{/student/events}" class="btn btn-secondary">Clear</a>
+            </form>
+        </div>
+
+        <div class="events-grid">
+            <div th:each="event : ${listEvents}" class="card">
+                <h3 th:text="${event.title}">Event Title</h3>
+                <p><strong>Date:</strong> <span th:text="${#temporals.format(event.date, 'dd MMM yyyy, HH:mm')}">Date</span></p>
+                <p><strong>Location:</strong> <span th:text="${event.location}">Location</span></p>
+                <p><strong>Department:</strong> <span th:text="${event.department}" class="badge">Dept</span></p>
+                <p><strong>Type:</strong> <span th:text="${event.eventType}" class="badge">Type</span></p>
+                <p th:text="${#strings.abbreviate(event.description, 100)}">Description</p>
+                <div style="margin-top: 1rem;">
+                    <a th:href="@{/student/event/{id}(id=${event.id})}" class="btn btn-secondary">View Details</a>
+                    <a th:href="@{/student/register/{id}(id=${event.id})}" class="btn btn-success">Register</a>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${totalPages > 1}" style="margin-top: 2rem; display: flex; justify-content: center; gap: 0.5rem;">
+            <a th:if="${currentPage > 1}" th:href="@{'/student/events?pageNo=' + ${currentPage - 1} + '&sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + (${department != null} ? '&department=' + ${department} : '') + (${eventType != null} ? '&eventType=' + ${eventType} : '')}" class="btn btn-secondary">&laquo; Prev</a>
+            <span th:each="i: ${#numbers.sequence(1, totalPages)}">
+                <a th:if="${currentPage != i}" th:href="@{'/student/events?pageNo=' + ${i} + '&sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + (${department != null} ? '&department=' + ${department} : '') + (${eventType != null} ? '&eventType=' + ${eventType} : '')}" class="btn btn-secondary" th:text="${i}"></a>
+                <span th:unless="${currentPage != i}" class="btn btn-primary" th:text="${i}"></span>  
+            </span>
+            <a th:if="${currentPage < totalPages}" th:href="@{'/student/events?pageNo=' + ${currentPage + 1} + '&sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + (${department != null} ? '&department=' + ${department} : '') + (${eventType != null} ? '&eventType=' + ${eventType} : '')}" class="btn btn-secondary">Next &raquo;</a>
+        </div>
+    </div>
+</body>
+</html>

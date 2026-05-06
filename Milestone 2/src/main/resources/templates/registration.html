@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register for Event</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">Smart Campus Events</div>
+        <div>
+            <a th:href="@{/student/events}">Home</a>
+            <a th:href="@{/student/my-registrations}">My Registrations</a>
+            <a th:href="@{/}">Exit Portal</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="card" style="max-width: 600px; margin: 0 auto;">
+            <h2>Register for Event</h2>
+            <h3 style="color: var(--primary-color);" th:text="${event.title}">Event Title</h3>
+            <hr>
+            
+            <div th:if="${error}" class="alert-danger" th:text="${error}"></div>
+            
+            <form th:action="@{/student/register}" method="post">
+                <input type="hidden" name="eventId" th:value="${event.id}">
+                
+                <div class="form-group">
+                    <label for="studentName">Full Name</label>
+                    <input type="text" id="studentName" name="studentName" class="form-control" required minlength="2" maxlength="100">
+                </div>
+                
+                <div class="form-group">
+                    <label for="studentEmail">Student Email</label>
+                    <input type="email" id="studentEmail" name="studentEmail" class="form-control" required>
+                </div>
+                
+                <div style="margin-top: 2rem;">
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Confirm Registration</button>
+                </div>
+            </form>
+            <div style="margin-top: 1rem; text-align: center;">
+                <a th:href="@{/student/events}" style="color: #666;">Cancel and go back</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

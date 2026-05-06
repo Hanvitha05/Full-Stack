@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Details</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">Smart Campus Events</div>
+        <div>
+            <a th:href="@{/student/events}">Home</a>
+            <a th:href="@{/student/my-registrations}">My Registrations</a>
+            <a th:href="@{/}">Exit Portal</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="card" style="max-width: 800px; margin: 0 auto;">
+            <h1 th:text="${event.title}">Event Title</h1>
+            <hr>
+            <p style="font-size: 1.1rem; line-height: 1.6;" th:text="${event.description}">Description</p>
+            
+            <div style="margin: 2rem 0; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+                <p><strong>Date & Time:</strong> <span th:text="${#temporals.format(event.date, 'dd MMM yyyy, hh:mm a')}"></span></p>
+                <p><strong>Department:</strong> <span th:text="${event.department}"></span></p>
+                <p><strong>Event Type:</strong> <span th:text="${event.eventType}"></span></p>
+                <p><strong>Location:</strong> <span id="event-location-text" th:text="${event.location}"></span></p>
+            </div>
+            
+            <!-- Map and Weather Section -->
+            <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; margin-bottom: 2rem;">
+                <!-- Weather Widget -->
+                <div style="flex: 1; min-width: 250px; background: #e3f2fd; padding: 1.5rem; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                    <h3 style="margin-top: 0; color: #1976d2; display: flex; align-items: center; gap: 0.5rem;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19C19.985 19 22 16.985 22 14.5C22 12.11 20.14 10.16 17.81 10.02C17.33 7.18 14.89 5 12 5C8.685 5 6 7.685 6 11C6 11.08 6.01 11.16 6.01 11.24C3.76 11.59 2 13.56 2 16C2 18.76 4.24 21 7 21H17.5Z"/></svg>
+                        Weather Forecast
+                    </h3>
+                    <div id="weather-content">
+                        <p style="color: #666; font-style: italic;">Loading weather data...</p>
+                    </div>
+                </div>
+
+                <!-- Interactive Map -->
+                <div style="flex: 2; min-width: 300px;">
+                    <div id="map" style="height: 300px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 1;"></div>
+                </div>
+            </div>
+            
+            <div style="display: flex; gap: 1rem;">
+                <a th:href="@{/student/register/{id}(id=${event.id})}" class="btn btn-success" style="font-size: 1.1rem; padding: 0.8rem 2rem;">Register Now</a>
+                <a th:href="@{/student/events}" class="btn btn-secondary" style="font-size: 1.1rem; padding: 0.8rem 2rem;">Back to Events</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const locationText = document.getElementById("event-location-text").innerText;
+            if (!locationText || locationText.trim() === '') {
+                document.getElementById('weather-content').innerHTML = '<p>Location not specified. Cannot fetch weather.</p>';
+                document.getElementById('map').innerHTML = '<p style="padding: 1rem; text-align: center; color: #666;">Map unavailable (No location provided)</p>';
+                return;
+            }
+
+            // Geocode using Nominatim API (OpenStreetMap)
+            const geocodeUrl = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(locationText)}&limit=1`;
+
+            fetch(geocodeUrl)
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.length > 0) {
+                        const lat = parseFloat(data[0].lat);
+                        const lon = parseFloat(data[0].lon);
+                        
+                        // Initialize Map
+                        const map = L.map('map').setView([lat, lon], 13);
+                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                            attribution: '&copy; OpenStreetMap contributors'
+                        }).addTo(map);
+                        L.marker([lat, lon]).addTo(map)
+                            .bindPopup(`<b>Event Location:</b><br>${locationText}`)
+                            .openPopup();
+
+                        // Fetch Weather using Open-Meteo
+                        fetchWeather(lat, lon);
+                    } else {
+                        document.getElementById('map').innerHTML = '<p style="padding: 1rem; text-align: center; color: #666;">Location not found on map.</p>';
+                        document.getElementById('weather-content').innerHTML = '<p>Could not determine coordinates for weather forecast.</p>';
+                    }
+                })
+                .catch(err => {
+                    console.error("Geocoding error:", err);
+                    document.getElementById('map').innerHTML = '<p style="padding: 1rem; text-align: center; color: red;">Error loading map.</p>';
+                    document.getElementById('weather-content').innerHTML = '<p>Error loading weather.</p>';
+                });
+
+            function fetchWeather(lat, lon) {
+                // Fetch current weather
+                const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`;
+                
+                fetch(weatherUrl)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data && data.current_weather) {
+                            const weather = data.current_weather;
+                            document.getElementById('weather-content').innerHTML = `
+                                <div style="display: flex; align-items: baseline; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                    <span style="font-size: 2.5rem; font-weight: bold; color: #333;">${weather.temperature}°C</span>
+                                </div>
+                                <p style="margin: 0; color: #555;">Wind Speed: <strong>${weather.windspeed} km/h</strong></p>
+                                <p style="margin: 0; font-size: 0.85rem; color: #777; margin-top: 0.5rem;">Data by Open-Meteo</p>
+                            `;
+                        } else {
+                            document.getElementById('weather-content').innerHTML = '<p>Weather data unavailable.</p>';
+                        }
+                    })
+                    .catch(err => {
+                        console.error("Weather fetch error:", err);
+                        document.getElementById('weather-content').innerHTML = '<p>Failed to load weather.</p>';
+                    });
+            }
+        });
+    </script>
+</body>
+</html>

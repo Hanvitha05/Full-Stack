@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Successful</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">Smart Campus Events</div>
+        <div>
+            <a th:href="@{/student/events}">Home</a>
+            <a th:href="@{/student/my-registrations}">My Registrations</a>
+            <a th:href="@{/}">Exit Portal</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="card" style="max-width: 600px; margin: 2rem auto; text-align: center;">
+            <div style="font-size: 4rem; color: var(--success-color); margin-bottom: 1rem;">&#10004;</div>
+            <h2 th:text="${message}">Success Message</h2>
+            <p style="margin-top: 1rem; color: #666;">We have successfully recorded your registration.</p>
+            
+            <!-- QR Code Section -->
+            <div th:if="${registrationId != null}" style="margin: 2rem 0; padding: 1rem; background: #f8f9fa; border-radius: 8px; display: inline-block;">
+                <p style="margin-bottom: 0.5rem; font-weight: bold; color: #333;">Your Registration Ticket (QR Code)</p>
+                <img th:src="@{'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=RegistrationID:' + ${registrationId}}" alt="Registration QR Code" style="border: 4px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-radius: 4px;" />
+                <p style="margin-top: 0.5rem; font-size: 0.85rem; color: #777;">Save this QR code for the event</p>
+            </div>
+            <div style="margin-top: 2rem;">
+                <a th:href="@{/student/events}" class="btn btn-primary">Browse More Events</a>
+                <a th:href="@{/student/my-registrations}" class="btn btn-secondary">View My Registrations</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
